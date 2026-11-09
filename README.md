@@ -74,8 +74,8 @@
 
 ## 🚀 실행 및 배포 링크
 
+- **Netlify 배포 URL**: https://cool-bunny-2b0192.netlify.app/
 - **GitHub Pages 배포 URL**: https://djkwon-poly.github.io/26-w10-weather/
-- **Netlify 배포 URL**: (Netlify 대시보드 연결 후 생성된 URL을 기재합니다)
 
 ### 로컬 실행 방법
 ```bash
