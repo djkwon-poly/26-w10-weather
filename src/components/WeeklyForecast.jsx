@@ -2,7 +2,7 @@ import { Droplets } from 'lucide-react';
 import WeatherIcon from './WeatherIcon';
 import { getWeatherInfo } from '../api/weather';
 
-export default function WeeklyForecast({ weatherData }) {
+export default function WeeklyForecast({ weatherData, unit = 'C', convertTemp }) {
   const daily = weatherData?.daily;
   if (!daily || !daily.time || !daily.time.length) return null;
 
@@ -15,8 +15,10 @@ export default function WeeklyForecast({ weatherData }) {
     const monthDay = `${date.getMonth() + 1}.${date.getDate()}`;
     const code = daily.weather_code[index];
     const weatherInfo = getWeatherInfo(code);
-    const maxTemp = Math.round(daily.temperature_2m_max[index]);
-    const minTemp = Math.round(daily.temperature_2m_min[index]);
+    const rawMax = daily.temperature_2m_max[index];
+    const rawMin = daily.temperature_2m_min[index];
+    const maxTemp = convertTemp ? convertTemp(rawMax) : Math.round(rawMax);
+    const minTemp = convertTemp ? convertTemp(rawMin) : Math.round(rawMin);
     const rainProb = daily.precipitation_probability_max ? daily.precipitation_probability_max[index] : null;
 
     return {
@@ -30,7 +32,6 @@ export default function WeeklyForecast({ weatherData }) {
     };
   });
 
-  // 전체 7일 중 최고/최저 기준 기온 범위
   const allMax = Math.max(...days.map((d) => d.maxTemp));
   const allMin = Math.min(...days.map((d) => d.minTemp));
   const totalRange = Math.max(allMax - allMin, 1);
@@ -39,12 +40,11 @@ export default function WeeklyForecast({ weatherData }) {
     <section className="card weekly-card">
       <div className="card-header">
         <span className="card-badge">7-DAY FORECAST</span>
-        <span className="card-subtitle">향후 7일간 주간 예보</span>
+        <span className="card-subtitle">향후 7일간 주간 예보 (°{unit})</span>
       </div>
 
       <div className="weekly-list">
         {days.map((day) => {
-          // 기온 바 위치 계산
           const leftPercent = ((day.minTemp - allMin) / totalRange) * 100;
           const widthPercent = Math.max(((day.maxTemp - day.minTemp) / totalRange) * 100, 8);
 
@@ -90,4 +90,3 @@ export default function WeeklyForecast({ weatherData }) {
     </section>
   );
 }
-

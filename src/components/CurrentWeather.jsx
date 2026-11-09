@@ -2,11 +2,13 @@ import { Thermometer, Droplets, Wind, Activity } from 'lucide-react';
 import WeatherIcon from './WeatherIcon';
 import { getWeatherInfo } from '../api/weather';
 
-export default function CurrentWeather({ weatherData }) {
+export default function CurrentWeather({ weatherData, unit = 'C', convertTemp }) {
   const current = weatherData?.current;
   if (!current) return null;
 
   const weatherInfo = getWeatherInfo(current.weather_code);
+  const tempVal = convertTemp ? convertTemp(current.temperature_2m) : Math.round(current.temperature_2m);
+  const apparentVal = convertTemp ? convertTemp(current.apparent_temperature) : Math.round(current.apparent_temperature);
 
   return (
     <section className="card weather-card">
@@ -23,11 +25,11 @@ export default function CurrentWeather({ weatherData }) {
         </div>
         <div className="temperature-group">
           <span className="temp-value">
-            {Math.round(current.temperature_2m)}
-            <span className="temp-unit">°C</span>
+            {tempVal}
+            <span className="temp-unit">°{unit}</span>
           </span>
           <span className="apparent-temp">
-            체감 {Math.round(current.apparent_temperature)}°C
+            체감 {apparentVal}°{unit}
           </span>
         </div>
       </div>
@@ -38,7 +40,7 @@ export default function CurrentWeather({ weatherData }) {
             <Thermometer size={16} />
             <span>체감온도</span>
           </div>
-          <div className="detail-value">{current.apparent_temperature.toFixed(1)}°C</div>
+          <div className="detail-value">{apparentVal}°{unit}</div>
         </div>
         <div className="detail-item">
           <div className="detail-label">
@@ -65,4 +67,3 @@ export default function CurrentWeather({ weatherData }) {
     </section>
   );
 }
-

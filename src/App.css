@@ -1,5 +1,52 @@
 /* 실시간 날씨 & 미세먼지 스마트 대시보드 스타일 */
 
+/* 0. 동적 비주얼 테마 래퍼 */
+.weather-app-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  transition: background 0.6s ease, color 0.6s ease;
+  background-attachment: fixed;
+}
+
+/* 테마: 기본 */
+.theme-default {
+  background: var(--bg);
+}
+
+/* 테마: 맑은 낮 (화사한 스카이블루) */
+.theme-clear-day {
+  background: linear-gradient(180deg, rgba(224, 242, 254, 0.6) 0%, rgba(240, 249, 255, 0.2) 100%), var(--bg);
+}
+
+/* 테마: 맑은 밤 (깊은 밤하늘 딥네이비) */
+.theme-clear-night {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.25) 0%, rgba(15, 23, 42, 0.1) 100%), var(--bg);
+}
+
+/* 테마: 흐린 날 (차분한 슬레이트 그레이) */
+.theme-clouds-day {
+  background: linear-gradient(180deg, rgba(226, 232, 240, 0.6) 0%, rgba(241, 245, 249, 0.2) 100%), var(--bg);
+}
+
+.theme-clouds-night {
+  background: linear-gradient(180deg, rgba(51, 65, 85, 0.25) 0%, rgba(30, 41, 59, 0.1) 100%), var(--bg);
+}
+
+/* 테마: 비 / 소나기 (촉촉한 쿨블루) */
+.theme-rain {
+  background: linear-gradient(180deg, rgba(186, 230, 253, 0.5) 0%, rgba(224, 242, 254, 0.2) 100%), var(--bg);
+}
+
+/* 테마: 눈 (은은한 스노우 아이스) */
+.theme-snow {
+  background: linear-gradient(180deg, rgba(241, 245, 249, 0.8) 0%, rgba(224, 242, 254, 0.3) 100%), var(--bg);
+}
+
+/* 테마: 뇌우 (신비로운 딥퍼플) */
+.theme-thunder {
+  background: linear-gradient(180deg, rgba(237, 233, 254, 0.5) 0%, rgba(243, 232, 255, 0.2) 100%), var(--bg);
+}
+
 .weather-app {
   width: 100%;
   max-width: 1080px;
@@ -57,6 +104,44 @@
   font-size: 14px;
   color: var(--text);
   margin-top: 4px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 옵션 D: 섭씨/화씨 토글 스위치 */
+.unit-toggle {
+  display: inline-flex;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.unit-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  padding: 6px 14px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.unit-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+}
+
+.unit-btn:hover:not(.active) {
+  color: var(--text-h);
 }
 
 .refresh-btn {
@@ -341,6 +426,7 @@
   flex-direction: column;
   gap: 20px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(10px);
 }
 
 .card:hover {
