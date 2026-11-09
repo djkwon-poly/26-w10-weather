@@ -138,8 +138,8 @@ export default function App() {
         gradient:
           colorMode === 'light'
             ? (isDay
-                ? 'linear-gradient(180deg, rgba(224, 242, 254, 0.6) 0%, rgba(203, 213, 225, 0.7) 100%)'
-                : 'linear-gradient(180deg, rgba(100, 116, 139, 0.55) 0%, rgba(71, 85, 105, 0.75) 100%)')
+              ? 'linear-gradient(180deg, rgba(224, 242, 254, 0.6) 0%, rgba(203, 213, 225, 0.7) 100%)'
+              : 'linear-gradient(180deg, rgba(100, 116, 139, 0.55) 0%, rgba(71, 85, 105, 0.75) 100%)')
             : 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.92) 100%)',
         imgUrl: isDay
           ? 'https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1600&auto=format&fit=crop&q=80'
@@ -151,11 +151,11 @@ export default function App() {
       gradient:
         colorMode === 'light'
           ? (isDay
-              ? 'linear-gradient(180deg, rgba(186, 230, 253, 0.5) 0%, rgba(254, 240, 138, 0.35) 100%)'
-              : 'linear-gradient(180deg, rgba(30, 58, 138, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%)')
+            ? 'linear-gradient(180deg, rgba(186, 230, 253, 0.5) 0%, rgba(254, 240, 138, 0.35) 100%)'
+            : 'linear-gradient(180deg, rgba(30, 58, 138, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%)')
           : (isDay
-              ? 'linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 58, 138, 0.85) 100%)'
-              : 'linear-gradient(180deg, rgba(2, 6, 23, 0.88) 0%, rgba(15, 23, 42, 0.95) 100%)'),
+            ? 'linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 58, 138, 0.85) 100%)'
+            : 'linear-gradient(180deg, rgba(2, 6, 23, 0.88) 0%, rgba(15, 23, 42, 0.95) 100%)'),
       imgUrl: isDay
         ? 'https://images.unsplash.com/photo-1601297183305-6df142704ea2?w=1600&auto=format&fit=crop&q=80'
         : 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600&auto=format&fit=crop&q=80',
