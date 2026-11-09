@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { RefreshCw, AlertCircle, MapPin } from 'lucide-react';
+import { RefreshCw, AlertCircle, MapPin, Sun, Moon } from 'lucide-react';
 import {
   DEFAULT_CITIES,
   fetchWeatherData,
@@ -20,7 +20,18 @@ export default function App() {
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  // 옵션 D: 섭씨(°C) / 화씨(°F) 단위 전환 상태
+  // 라이트/다크 모드 상태 (기본값: 라이트 모드)
+  const [colorMode, setColorMode] = useState(() => {
+    return localStorage.getItem('weather_color_mode') || 'light';
+  });
+
+  const toggleColorMode = () => {
+    const nextMode = colorMode === 'light' ? 'dark' : 'light';
+    setColorMode(nextMode);
+    localStorage.setItem('weather_color_mode', nextMode);
+  };
+
+  // 섭씨(°C) / 화씨(°F) 단위 전환 상태
   const [unit, setUnit] = useState('C');
 
   const convertTemp = useCallback(
@@ -60,27 +71,105 @@ export default function App() {
     loadCityData(selectedCity);
   }, [selectedCity, loadCityData]);
 
-  // 옵션 A: 현재 날씨 및 주야간(is_day) 기반 동적 비주얼 테마
-  const themeClass = useMemo(() => {
+  // 현재 날씨 및 주야간(is_day), 테마 모드에 맞춘 감성 배경 이미지와 그라데이션
+  const weatherBg = useMemo(() => {
     const current = weatherData?.current;
-    if (!current) return 'theme-default';
+    if (!current) {
+      return {
+        gradient:
+          colorMode === 'light'
+            ? 'linear-gradient(135deg, rgba(224, 242, 254, 0.85) 0%, rgba(240, 249, 255, 0.9) 100%)'
+            : 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%)',
+        imgUrl:
+          'https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1600&auto=format&fit=crop&q=80',
+      };
+    }
+
     const isDay = current.is_day === 1;
     const code = current.weather_code;
 
-    if (code >= 95) return 'theme-thunder';
-    if (code >= 71 && code <= 77) return 'theme-snow';
-    if ((code >= 51 && code <= 65) || (code >= 80 && code <= 82)) return 'theme-rain';
-    if (code === 2 || code === 3 || code === 45 || code === 48) {
-      return isDay ? 'theme-clouds-day' : 'theme-clouds-night';
+    // 1. 뇌우 (Thunderstorm)
+    if (code >= 95) {
+      return {
+        gradient:
+          colorMode === 'light'
+            ? 'linear-gradient(180deg, rgba(76, 29, 149, 0.45) 0%, rgba(30, 27, 75, 0.7) 100%)'
+            : 'linear-gradient(180deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 10, 30, 0.95) 100%)',
+        imgUrl:
+          'https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?w=1600&auto=format&fit=crop&q=80',
+      };
     }
-    if (code <= 1) {
-      return isDay ? 'theme-clear-day' : 'theme-clear-night';
+    // 2. 눈 (Snow)
+    if (code >= 71 && code <= 77) {
+      return {
+        gradient:
+          colorMode === 'light'
+            ? 'linear-gradient(180deg, rgba(224, 242, 254, 0.65) 0%, rgba(241, 245, 249, 0.8) 100%)'
+            : 'linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.92) 100%)',
+        imgUrl:
+          'https://images.unsplash.com/photo-1517299321929-30a70817547c?w=1600&auto=format&fit=crop&q=80',
+      };
     }
-    return 'theme-default';
-  }, [weatherData]);
+    // 3. 비 / 소나기 / 이슬비 (Rain)
+    if ((code >= 51 && code <= 65) || (code >= 80 && code <= 82)) {
+      return {
+        gradient:
+          colorMode === 'light'
+            ? 'linear-gradient(180deg, rgba(186, 230, 253, 0.6) 0%, rgba(147, 197, 253, 0.7) 100%)'
+            : 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(23, 37, 84, 0.9) 100%)',
+        imgUrl:
+          'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=1600&auto=format&fit=crop&q=80',
+      };
+    }
+    // 4. 안개 (Fog)
+    if (code === 45 || code === 48) {
+      return {
+        gradient:
+          colorMode === 'light'
+            ? 'linear-gradient(180deg, rgba(226, 232, 240, 0.7) 0%, rgba(203, 213, 225, 0.8) 100%)'
+            : 'linear-gradient(180deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.92) 100%)',
+        imgUrl:
+          'https://images.unsplash.com/photo-1487621167305-5d248087c724?w=1600&auto=format&fit=crop&q=80',
+      };
+    }
+    // 5. 구름 / 흐림 (Clouds)
+    if (code === 2 || code === 3) {
+      return {
+        gradient:
+          colorMode === 'light'
+            ? (isDay
+                ? 'linear-gradient(180deg, rgba(224, 242, 254, 0.6) 0%, rgba(203, 213, 225, 0.7) 100%)'
+                : 'linear-gradient(180deg, rgba(100, 116, 139, 0.55) 0%, rgba(71, 85, 105, 0.75) 100%)')
+            : 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.92) 100%)',
+        imgUrl: isDay
+          ? 'https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1600&auto=format&fit=crop&q=80'
+          : 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=1600&auto=format&fit=crop&q=80',
+      };
+    }
+    // 6. 맑음 (Clear)
+    return {
+      gradient:
+        colorMode === 'light'
+          ? (isDay
+              ? 'linear-gradient(180deg, rgba(186, 230, 253, 0.5) 0%, rgba(254, 240, 138, 0.35) 100%)'
+              : 'linear-gradient(180deg, rgba(30, 58, 138, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%)')
+          : (isDay
+              ? 'linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 58, 138, 0.85) 100%)'
+              : 'linear-gradient(180deg, rgba(2, 6, 23, 0.88) 0%, rgba(15, 23, 42, 0.95) 100%)'),
+      imgUrl: isDay
+        ? 'https://images.unsplash.com/photo-1601297183305-6df142704ea2?w=1600&auto=format&fit=crop&q=80'
+        : 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600&auto=format&fit=crop&q=80',
+    };
+  }, [weatherData, colorMode]);
 
   return (
-    <div className={`weather-app-wrapper ${themeClass}`}>
+    <div
+      className="weather-app-wrapper"
+      data-theme={colorMode}
+      style={{
+        backgroundImage: `${weatherBg.gradient}, url(${weatherBg.imgUrl})`,
+      }}
+    >
       <div className="weather-app">
         {/* 1. 상단 헤더 */}
         <header className="app-header">
@@ -93,6 +182,26 @@ export default function App() {
           </div>
 
           <div className="header-actions">
+            {/* 라이트/다크 모드 토글 버튼 */}
+            <button
+              type="button"
+              className="theme-mode-btn"
+              onClick={toggleColorMode}
+              title={colorMode === 'light' ? '다크 모드로 전환' : '라이트 모드로 전환'}
+            >
+              {colorMode === 'light' ? (
+                <>
+                  <Moon size={16} />
+                  <span>다크 모드</span>
+                </>
+              ) : (
+                <>
+                  <Sun size={16} color="#f59e0b" />
+                  <span>라이트 모드</span>
+                </>
+              )}
+            </button>
+
             {/* 단위 변환 토글 스위치 (섭씨 °C / 화씨 °F) */}
             <div className="unit-toggle" role="group" aria-label="온도 단위 전환">
               <button
@@ -111,6 +220,7 @@ export default function App() {
               </button>
             </div>
 
+            {/* 새로고침 버튼 */}
             <button
               className="refresh-btn"
               onClick={() => loadCityData(selectedCity)}
